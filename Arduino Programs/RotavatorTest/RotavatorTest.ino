@@ -1,39 +1,53 @@
 /**************************************
  * Robotic Rotavator Test Code        *
  * By: Lloyd Mundo                    *
- * Last Modified: 07 Mar. 2019        *
+ * Last Modified: 11 Mar. 2019        *
  **************************************/
 
 /* Global Variables are declared here */
-const int echoPin = 13;   // echo pin of ultrasonic sensor
-const int trigPin = 4;    // trigger pin of ultrasonic sensor
-long duration;            // duraion of the echo pulse
-int distance;             // distance of the object detected
+const int echoPin = 13;     // echo pin of ultrasonic sensor
+const int trigPin = 4;      // trigger pin of ultrasonic sensor
+long duration;              // duraion of the echo pulse
+int distance;               // distance of the object detected
+const byte leftSwitch = 3;  // interrupt pin for left limit switch
+const byte rightSwitch = 2; // interrupt pin for right limit switch
+volatile bool bumpedOnLeft = 0;
+volatile bool bumpedOnRight = 0;
  
 /* Function prototypes declarations */
 void forward( int ms );     
 void reverse( int ms );
 void stopMotor( int ms );
-void rotor();
+void turnLeft( int ms );
+void turnRight( int ms );
+void rotorOn();
+void rotorOff();
 int objDistance();
 
 /* Set up function to define ports and run once*/
-void setup() {
+void setup()
+{
   /* Ultrasonic Sensor */
-  pinMode( 4, OUTPUT );
-  pinMode( 13, INPUT );
+  pinMode( trigPin, OUTPUT );
+  pinMode( echoPin, INPUT );
 
-  /* Wheel Motor */ 
+  /* Wheel Motors */ 
   pinMode( 12, OUTPUT );  //HIGH for forward
   pinMode( 11, OUTPUT );  //HIGH for reverse
   pinMode( 10, OUTPUT );  //HIGH for forward
   pinMode(  9, OUTPUT );  //HIGH for reverse
 
-  /* Rotor Motor */
+  /* Rotor Motors */
   pinMode( 8, OUTPUT ); //HIGH for reverse
   pinMode( 7, OUTPUT ); //HIGH for forward
   pinMode( 6, OUTPUT ); //HIGH for reverse
   pinMode( 5, OUTPUT ); //HIGH for forward
+
+  /* Interrupts */
+  pinMode(leftSwitch, INPUT_PULLUP);
+  pinMode(rightSwitch, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(leftSwitch), leftBump, HIGH);
+  attachInterrupt(digitalPinToInterrupt(rightSwitch), rightBump, HIGH);
 
   Serial.begin(9600);
 }
@@ -42,24 +56,53 @@ void setup() {
 /* Main Program */
 void loop() 
 {
-  rotor();
-  if(objDistance() < 6)
+  rotorOn();
+  
+  if(objDistance() < 7)
   {
-    reverse( 50 );  // reverse
+    turnLeft(1000);  
+    if(objDistance() < 7)
+    {
+      turnRight(2000); 
+    }
+  }
+  else if(bumpedOnLeft == 1)
+  {
+    rotorOff();
+    reverse(1500);
+    turnRight(1000);
+    bumpedOnLeft = 0;
+  }
+  else if(bumpedOnRight == 1)
+  {
+    rotorOff();
+    reverse(1500);
+    turnLeft(1000);
+    bumpedOnRight = 0; 
   }
   else
   {
     forward( 50 );  // forward
   }
-  /*forward( 1000 );  // forward for 1s
-  stopMotor( 50 );  // stop for 50ms
-  reverse( 2000 );  // reverse for 2s
-  stopMotor( 50 );  // stop for 50ms
-  */
+    
   delay(50); //50ms delay
 }
 
+/****************************************************
+ * Interrupt Service Routine for left limit switch  *
+ ***************************************************/
+void leftBump()
+{
+  bumpedOnLeft = 1;
+}
 
+/****************************************************
+ * Interrupt Service Routine for right limit switch *
+ ***************************************************/
+void rightBump()
+{  
+  bumpedOnRight = 1;
+}
 
 /**********************************
  * Function to move robot forward *
@@ -100,17 +143,56 @@ void stopMotor(int ms)
   delay(ms);
 }
 
+/******************************************
+ * Function to turn robot to left         *
+ * Arguments: delay in ms                 *
+ *****************************************/
+void turnLeft(int ms)
+{
+  digitalWrite(12, HIGH);
+  digitalWrite(10, LOW);
+  digitalWrite(11, LOW);
+  digitalWrite(9, HIGH);
+  delay(ms);
+}
+
+/******************************************
+ * Function to turn robot to right        *
+ * Arguments: delay in ms                 *
+ *****************************************/
+void turnRight(int ms)
+{
+  digitalWrite(12, LOW);
+  digitalWrite(10, HIGH);
+  digitalWrite(11, HIGH);
+  digitalWrite(9, LOW);
+  delay(ms);
+}
+
 /********************************
  * Function to turn rotor ON    *
  * No arguments or retun values *
  *******************************/
-void rotor()
+void rotorOn()
 {
   digitalWrite(8, LOW);
   digitalWrite(6, LOW);
   digitalWrite(7, HIGH);
   digitalWrite(5, HIGH);
 }
+
+/********************************
+ * Function to turn rotor OFF   *
+ * No arguments or retun values *
+ *******************************/
+void rotorOff()
+{
+  digitalWrite(8, LOW);
+  digitalWrite(6, LOW);
+  digitalWrite(7, LOW);
+  digitalWrite(5, LOW);
+}
+
 /*********************************************************
  * Function to determine the distance of object detected *
  * Returns: object distance                              *
