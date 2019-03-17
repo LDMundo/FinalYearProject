@@ -1,18 +1,18 @@
 /**************************************
  * Robotic Rotavator Test Code        *
  * By: Lloyd Mundo                    *
- * Last Modified: 11 Mar. 2019        *
+ * Last Modified: 13 Mar. 2019        *
  **************************************/
 
 /* Global Variables are declared here */
-const int echoPin = 13;     // echo pin of ultrasonic sensor
-const int trigPin = 4;      // trigger pin of ultrasonic sensor
-long duration;              // duraion of the echo pulse
-int distance;               // distance of the object detected
-const byte leftSwitch = 3;  // interrupt pin for left limit switch
-const byte rightSwitch = 2; // interrupt pin for right limit switch
-volatile bool bumpedOnLeft = 0;
-volatile bool bumpedOnRight = 0;
+const int echoPin = 13;           // echo pin of ultrasonic sensor
+const int trigPin = 4;            // trigger pin of ultrasonic sensor
+long duration;                    // duraion of the echo pulse
+float distance;                   // distance of the object detected
+const byte leftSwitch = 3;        // interrupt pin for left limit switch
+const byte rightSwitch = 2;       // interrupt pin for right limit switch
+volatile bool bumpedOnLeft = 0;   // flag for when left bumper is hit
+volatile bool bumpedOnRight = 0;  // flag for when right bumper is hit
  
 /* Function prototypes declarations */
 void forward( int ms );     
@@ -22,7 +22,7 @@ void turnLeft( int ms );
 void turnRight( int ms );
 void rotorOn();
 void rotorOff();
-int objDistance();
+float objDistance();
 
 /* Set up function to define ports and run once*/
 void setup()
@@ -58,12 +58,16 @@ void loop()
 {
   rotorOn();
   
-  if(objDistance() < 7)
+  if(objDistance() < 10)
   {
-    turnLeft(1000);  
-    if(objDistance() < 7)
+    turnLeft(1000); 
+    forward(1000);
+    turnRight(1000); 
+    if(objDistance() < 10)
     {
       turnRight(2000); 
+      forward(1000);
+      turnLeft(1000);
     }
   }
   else if(bumpedOnLeft == 1)
@@ -197,7 +201,7 @@ void rotorOff()
  * Function to determine the distance of object detected *
  * Returns: object distance                              *
  ********************************************************/
-int objDistance()
+float objDistance()
 {
   digitalWrite(trigPin, HIGH);          // output high on trigger pin
   delayMicroseconds(10);                // high for 10us delay
