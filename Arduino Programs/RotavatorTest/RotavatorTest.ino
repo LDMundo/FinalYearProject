@@ -7,8 +7,8 @@
 /* Global Variables are declared here */
 const int echoPin = 13;           // echo pin of ultrasonic sensor
 const int trigPin = 4;            // trigger pin of ultrasonic sensor
-long duration;                    // duraion of the echo pulse
-float distance;                   // distance of the object detected
+long duration = 0;                // duraion of the echo pulse
+float distance = 0;               // distance of the object detected
 const byte leftSwitch = 3;        // interrupt pin for left limit switch
 const byte rightSwitch = 2;       // interrupt pin for right limit switch
 volatile bool bumpedOnLeft = 0;   // flag for when left bumper is hit
@@ -49,6 +49,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(leftSwitch), leftBump, HIGH);
   attachInterrupt(digitalPinToInterrupt(rightSwitch), rightBump, HIGH);
 
+  delay(1000); // 1 second delay before robot starts
   Serial.begin(9600);
 }
 
