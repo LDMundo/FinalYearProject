@@ -61,33 +61,27 @@ void loop()
   
   if(objDistance() < 10)
   {
-    turnLeft(1000); 
-    forward(1000);
-    turnRight(1000); 
-    if(objDistance() < 10)
-    {
-      turnRight(2000); 
-      forward(1000);
-      turnLeft(1000);
-    }
+    reverse(1000);
+    turnRight(2000);
   }
   else if(bumpedOnLeft == 1)
   {
     rotorOff();
-    reverse(1500);
-    turnRight(1000);
+    reverse(1000);
+    turnRight(2000);
     bumpedOnLeft = 0;
   }
   else if(bumpedOnRight == 1)
   {
     rotorOff();
-    reverse(1500);
-    turnLeft(1000);
+    reverse(1000);
+    turnLeft(2000);
     bumpedOnRight = 0; 
   }
   else
   {
-    forward( 50 );  // forward
+    stopMotor(2000);
+    forward(1000);
   }
     
   delay(50); //50ms delay
