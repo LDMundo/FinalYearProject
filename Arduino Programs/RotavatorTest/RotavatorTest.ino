@@ -1,7 +1,7 @@
 /**************************************
  * Robotic Rotavator Test Code        *
  * By: Lloyd Mundo                    *
- * Last Modified: 13 Mar. 2019        *
+ * Last Modified: 20 Mar. 2019        *
  **************************************/
 
 /* Global Variables are declared here */
@@ -61,20 +61,17 @@ void loop()
   
   if(objDistance() < 10)
   {
-    reverse(1000);
     turnRight(2000);
   }
   else if(bumpedOnLeft == 1)
   {
     rotorOff();
-    reverse(1000);
     turnRight(2000);
     bumpedOnLeft = 0;
   }
   else if(bumpedOnRight == 1)
   {
     rotorOff();
-    reverse(1000);
     turnLeft(2000);
     bumpedOnRight = 0; 
   }
