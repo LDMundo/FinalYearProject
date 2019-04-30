@@ -13,11 +13,15 @@ const byte leftSwitch = 3;        // interrupt pin for left limit switch
 const byte rightSwitch = 2;       // interrupt pin for right limit switch
 volatile bool bumpedOnLeft = 0;   // flag for when left bumper is hit
 volatile bool bumpedOnRight = 0;  // flag for when right bumper is hit
+bool forwardState = 0;            // 1 if forward, 0 for stopped
+unsigned long previousMillis = 0; // store the last time forwardState is updated
+unsigned long currentMillis = 0;  // current running time of forwardState
+const long interval = 1500;       // interval to stop and forward the motor (wheels)
  
 /* Function prototypes declarations */
-void forward( int ms );     
+void forward();     
 void reverse( int ms );
-void stopMotor( int ms );
+void stopMotor();
 void turnLeft( int ms );
 void turnRight( int ms );
 void rotorOn();
@@ -58,30 +62,34 @@ void setup()
 void loop() 
 {
   rotorOn();
-  
-  if(objDistance() < 10)
+  currentMillis = millis();
+  if(currentMillis - previousMillis >= interval)
   {
-    turnRight(2000);
+    previousMillis = currentMillis;
+    if(forwardState == 0){
+      forwardState = 1;
+      forward();
+    }
+    else{
+      forwardState = 0;
+      stopMotor();
+    }
   }
-  else if(bumpedOnLeft == 1)
-  {
-    rotorOff();
-    turnRight(2000);
+
+  if(bumpedOnLeft == 1){
+    reverse(1000);
+    turnRight(1000);
     bumpedOnLeft = 0;
   }
-  else if(bumpedOnRight == 1)
-  {
-    rotorOff();
-    turnLeft(2000);
-    bumpedOnRight = 0; 
+  else if(bumpedOnRight == 1){
+    reverse(1000);
+    turnLeft(1000);
+    bumpedOnRight = 0;
   }
-  else
-  {
-    stopMotor(2000);
-    forward(1000);
+  else if(objDistance() < 10){
+    reverse(1000);
+    turnLeft(1000);
   }
-    
-  delay(50); //50ms delay
 }
 
 /****************************************************
@@ -104,13 +112,13 @@ void rightBump()
  * Function to move robot forward *
  * Arguments: delay in ms         *
  *********************************/
-void forward(int ms)
+void forward()
 {
   digitalWrite(12, HIGH);
   digitalWrite(10, HIGH);
   digitalWrite(11, LOW);
   digitalWrite(9, LOW);
-  delay(ms);
+
 }
 
 /******************************************
@@ -130,13 +138,12 @@ void reverse(int ms)
  * Function to stop the robot *
  * Arguments: delay in ms     *
  *****************************/
-void stopMotor(int ms)
+void stopMotor()
 {
   digitalWrite(12, LOW);
   digitalWrite(10, LOW);
   digitalWrite(11, LOW);
   digitalWrite(9, LOW);
-  delay(ms);
 }
 
 /******************************************
