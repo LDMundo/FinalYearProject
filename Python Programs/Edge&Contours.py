@@ -27,6 +27,11 @@ contours, hierarchy = cv2.findContours(E,
                 mode = cv2.RETR_EXTERNAL,
                 method = cv2.CHAIN_APPROX_SIMPLE)
 
+#Convex hull identifies closed contours so that they
+#can be converted to a known shape eg ellipse or rectangle
+#hull = cv2.convexHull(contours)
+
+
 #draw contours
 Im_copy = cv2.drawContours(Im_copy, contours, contourIdx=-1, color=(0,0,255), thickness=2)
 
