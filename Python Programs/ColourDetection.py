@@ -39,10 +39,10 @@ kernelClose = np.ones((15,15),"uint8")
 kernelOpen2 = np.ones((8,8),"uint8")
 maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpen)
 maskCloseMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_CLOSE, kernelClose)
-maskOpenMorph2 = cv2.morphologyEx(maskCloseMorph, cv2.MORPH_OPEN, kernelOpen2)
+#maskOpenMorph2 = cv2.morphologyEx(maskCloseMorph, cv2.MORPH_OPEN, kernelOpen2)
 
 #Find Contours 
-contours,hierarchy = cv2.findContours(maskOpenMorph2.copy(),
+contours,hierarchy = cv2.findContours(maskCloseMorph.copy(),
                          mode = cv2.RETR_EXTERNAL,
                          method = cv2.CHAIN_APPROX_NONE)
 
@@ -54,7 +54,7 @@ for i in range(len(contours)):
      if(area > 250):
           x,y,w,h = cv2.boundingRect(contours[i])
           cv2.rectangle(imgCopy, (x,y), (x+w, y+h), (255,0,0), 2)
-
+         #print("rectangle " + str(i) + "   " + str(x) + "," + str(y))
 ''' pseudo code for arduino command         
           if(y >= yLimit):
                if(((x>xLimitLeft) || (x+w > xLimitLeft)) && ((x<xCenter) || (x+w < xCenter))):
@@ -71,7 +71,7 @@ cv2.line(imgCopy, (xLimitRight,0), (xLimitRight, imgHeight), (255,255,255), 2) #
 cv2.imshow("Image in test", imgCopy)
 cv2.imshow("mask", greenMask | woodMask)
 cv2.imshow("Morphology Opening", maskOpenMorph)
-cv2.imshow("Morphology second Opening", maskOpenMorph2)
+cv2.imshow("Morphology Closing", maskCloseMorph)
 cv2.waitKey(0)
 
 #print("H = "+str(imgHeight) + "\nWidth = " + str(imgWidth))
