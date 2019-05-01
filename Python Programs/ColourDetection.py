@@ -1,3 +1,12 @@
+'''
+     Object tracking code for coloured objects 
+     This code will be used as an object detection tool for robotic Rotavator
+     The code  is currently detecting green, and plywood colour
+     
+     By: Lloyd Mundo
+     Last Modified: 01/05/2019
+'''
+
 #import modules
 import cv2
 import numpy as np
@@ -75,15 +84,3 @@ cv2.imshow("Morphology Closing", maskCloseMorph)
 cv2.waitKey(0)
 
 #print("H = "+str(imgHeight) + "\nWidth = " + str(imgWidth))
-
-'''
-#Tracking Colour (Yellow) 
-(_,contours,hierarchy)=cv2.findContours(yellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-        
-     for pic, contour in enumerate(contours):
-              area = cv2.contourArea(contour)
-              if(area>300):
-                   x,y,w,h = cv2.boundingRect(contour)     
-                        img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),3)
-
-'''
