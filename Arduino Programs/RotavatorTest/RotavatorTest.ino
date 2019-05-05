@@ -1,7 +1,7 @@
 /**************************************
  * Robotic Rotavator Test Code        *
  * By: Lloyd Mundo                    *
- * Last Modified: 20 Mar. 2019        *
+ * Last Modified: 04 May 2019         *
  **************************************/
 
 /* Global Variables are declared here */
@@ -25,6 +25,7 @@ void stopMotor();
 void turnLeft( int ms );
 void turnRight( int ms );
 void rotorOn();
+void rotorReverse();
 void rotorOff();
 float objDistance();
 
@@ -77,17 +78,23 @@ void loop()
   }
 
   if(bumpedOnLeft == 1){
+    rotorReverse();
     reverse(1000);
+    rotorOn();
     turnRight(1000);
     bumpedOnLeft = 0;
   }
   else if(bumpedOnRight == 1){
+    rotorReverse();
     reverse(1000);
+    rotorOn();
     turnLeft(1000);
     bumpedOnRight = 0;
   }
   else if(objDistance() < 10){
+    rotorReverse();
     reverse(1000);
+    rotorOn();
     turnLeft(1000);
   }
 }
@@ -182,6 +189,18 @@ void rotorOn()
   digitalWrite(6, LOW);
   digitalWrite(7, HIGH);
   digitalWrite(5, HIGH);
+}
+
+/********************************
+ * Function to reverse rotor    *
+ * No arguments or retun values *
+ *******************************/
+void rotorReverse()
+{
+  digitalWrite(8, HIGH);
+  digitalWrite(6, HIGH);
+  digitalWrite(7, LOW);
+  digitalWrite(5, LOW);
 }
 
 /********************************
