@@ -6,7 +6,6 @@
      By: Lloyd Mundo
      Last Modified: 01/05/2019
 '''
-
 #import modules
 import cv2
 import numpy as np
@@ -15,11 +14,11 @@ import numpy as np
 #cap = cv2.VideoCapture(0)
 #while True:_, img = cap.read()
 
-img = cv2.imread("testImage.png",1)
+img = cv2.imread("testImage.png", 1)
 imgCopy = img.copy()
 
 #Determine the size of the image
-imgHeight = np.size(imgCopy,0)
+imgHeight = np.size(imgCopy, 0)
 imgWidth = np.size(imgCopy, 1)
 xCenter = int(imgWidth/2)
 yCenter = int(imgHeight/2)
@@ -31,29 +30,26 @@ yLimit = int(0.25*imgHeight)
 imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV)
 
 #deflining the range of green color
-woodLower = np.array([9,16,163], np.uint8)
-woodUpper = np.array([29,36,243], np.uint8)
-greenLower = np.array([22,80,40],np.uint8)
-greenUpper = np.array([60,255,255],np.uint8)
+woodLower = np.array([9, 16, 163], np.uint8)
+woodUpper = np.array([29, 36, 243], np.uint8)
+greenLower = np.array([22, 80, 40], np.uint8)
+greenUpper = np.array([60, 255, 255], np.uint8)
 
 #Filter out other colours, only show green colour
 greenMask = cv2.inRange(imgHSV, greenLower, greenUpper)
-
 #Wood mask
 woodMask = cv2.inRange(imgHSV, woodLower, woodUpper)
 
 #Morphological Transformation
-kernelOpen = np.ones((8,8),"uint8")
-kernelClose = np.ones((15,15),"uint8")
-kernelOpen2 = np.ones((8,8),"uint8")
+kernelOpen = np.ones((5,5), "uint8")
+kernelClose = np.ones((15,15), "uint8")
+#kernelOpen2 = np.ones((8,8), "uint8")
 maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpen)
-maskCloseMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_CLOSE, kernelClose)
+maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
 #maskOpenMorph2 = cv2.morphologyEx(maskCloseMorph, cv2.MORPH_OPEN, kernelOpen2)
 
 #Find Contours 
-contours,hierarchy = cv2.findContours(maskCloseMorph.copy(),
-                         mode = cv2.RETR_EXTERNAL,
-                         method = cv2.CHAIN_APPROX_NONE)
+contours,hierarchy = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
 
 #cv2.drawContours(imgCopy, contours, -1, (0,0,255), thickness = 2)
 
@@ -65,7 +61,7 @@ for i in range(len(contours)):
           cv2.rectangle(imgCopy, (x,y), (x+w, y+h), (255,0,0), 2)
          #print("rectangle " + str(i) + "   " + str(x) + "," + str(y))
 ''' pseudo code for arduino command         
-          if(y >= yLimit):
+          if(y+h >= yLimit):
                if(((x>xLimitLeft) || (x+w > xLimitLeft)) && ((x<xCenter) || (x+w < xCenter))):
                     # tell arduino to make a slight turn to right
                else if(((x<xLimitRight) || (x+w < xLimitRight)) && ((x>xCenter) || (x+w > xCenter))):
@@ -75,7 +71,6 @@ for i in range(len(contours)):
 cv2.line(imgCopy, (0,yLimit), (imgWidth,yLimit), (255,255,255), 2) # top limit
 cv2.line(imgCopy, (xLimitLeft, 0), (xLimitLeft, imgHeight), (255,255,255), 2) # left limit
 cv2.line(imgCopy, (xLimitRight,0), (xLimitRight, imgHeight), (255,255,255), 2) # right limit
-
 
 cv2.imshow("Image in test", imgCopy)
 cv2.imshow("mask", greenMask | woodMask)
