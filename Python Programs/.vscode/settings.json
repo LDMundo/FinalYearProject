@@ -1,0 +1,7 @@
+{
+    "python.linting.pylintArgs": [
+        "--extension-pkg-whitelist=cv2",    
+        "--disable=W1302,bad-indentation,trailing-whitespace,bad-whitespcae,pointless-string-statement,invalid-name"
+        
+    ]
+}
