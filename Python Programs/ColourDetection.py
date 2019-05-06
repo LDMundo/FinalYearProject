@@ -4,7 +4,7 @@
      The code  is currently detecting green, and plywood colour
      
      By: Lloyd Mundo
-     Last Modified: 01/05/2019
+     Last Modified: 06/05/2019
 '''
 #import modules
 import cv2
@@ -45,7 +45,6 @@ kernelOpen = np.ones((5,5), "uint8")
 kernelClose = np.ones((15,15), "uint8")
 maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpen)
 maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
-
 
 #Find Contours 
 _, contours, _ = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
