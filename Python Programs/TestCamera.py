@@ -1,3 +1,5 @@
+
+'''
 from picamera import PiCamera
 from time import sleep
 
@@ -10,3 +12,20 @@ camera.image_effect = 'colorpoint'
 camera.image_effect = 'saturation'
 sleep(30)
 camera.stop_preview()
+'''
+
+import cv2
+import numpy as np
+
+cam = cv2.VideoCapture(0)
+
+while True:
+    _, frame = cam.read();
+    cv2.imshow("Frame", frame)
+    key = cv2.waitKey(1)
+    if key == 27:
+        break
+
+cam.release()
+cv2.desttroyAllWindows()
+
