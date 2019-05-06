@@ -14,7 +14,7 @@ import numpy as np
 #cap = cv2.VideoCapture(0)
 #while True:_, img = cap.read()
 
-img = cv2.imread("testImage.png", 1)
+img = cv2.imread("testImage.JPG", 1)
 imgCopy = img.copy()
 
 #Determine the size of the image
@@ -49,7 +49,7 @@ maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
 #maskOpenMorph2 = cv2.morphologyEx(maskCloseMorph, cv2.MORPH_OPEN, kernelOpen2)
 
 #Find Contours 
-contours,hierarchy = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
+_, contours, _ = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
 
 #cv2.drawContours(imgCopy, contours, -1, (0,0,255), thickness = 2)
 
