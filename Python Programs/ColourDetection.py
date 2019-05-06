@@ -12,7 +12,7 @@ import numpy as np
 
 #Capture video through default camera
 #cap = cv2.VideoCapture(0)
-#while True:_, img = cap.read()
+#_, img = cap.read()
 
 img = cv2.imread("testImage.JPG", 1)
 imgCopy = img.copy()
@@ -43,10 +43,9 @@ woodMask = cv2.inRange(imgHSV, woodLower, woodUpper)
 #Morphological Transformation
 kernelOpen = np.ones((5,5), "uint8")
 kernelClose = np.ones((15,15), "uint8")
-#kernelOpen2 = np.ones((8,8), "uint8")
 maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpen)
 maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
-#maskOpenMorph2 = cv2.morphologyEx(maskCloseMorph, cv2.MORPH_OPEN, kernelOpen2)
+
 
 #Find Contours 
 _, contours, _ = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
