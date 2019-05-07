@@ -4,6 +4,8 @@ import numpy as np
 image_hsv = None   # global ;(
 pixel = (20,60,80) # some stupid default
 
+cam = cv2.VideoCapture(0)
+
 # mouse callback function
 def pick_color(event,x,y,flags,param):
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -20,8 +22,9 @@ def pick_color(event,x,y,flags,param):
 def main():
     import sys
     global image_hsv, pixel # so we can use it in mouse callback
-
-    image_src = cv2.imread("testImage.png",1).copy()  # pick.py my.png
+    
+    _, frame = cam.read();
+    image_src = frame.copy()  # pick.py my.png
     if image_src is None:
         print ("the image read is None............")
         return
