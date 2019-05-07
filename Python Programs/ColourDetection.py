@@ -32,7 +32,7 @@ imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV)
 #deflining the range of green color
 woodLower = np.array([9, 16, 163], np.uint8)
 woodUpper = np.array([29, 36, 243], np.uint8)
-greenLower = np.array([22, 26, 40], np.uint8)
+greenLower = np.array([22, 15, 30], np.uint8)
 greenUpper = np.array([99, 255, 255], np.uint8)
 
 #Filter out other colours, only show green colour

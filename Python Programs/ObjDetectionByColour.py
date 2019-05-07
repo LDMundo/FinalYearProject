@@ -34,7 +34,7 @@ def extractMask(img):
     #deflining the range of colours [H, S, V]
     woodLower = np.array([9, 16, 163], np.uint8)
     woodUpper = np.array([29, 36, 243], np.uint8)
-    greenLower = np.array([22, 26, 40], np.uint8)
+    greenLower = np.array([22, 15, 30], np.uint8)
     greenUpper = np.array([99, 255, 255], np.uint8)
 
     #Filter out other colours, only show green colour
@@ -54,7 +54,7 @@ def extractMask(img):
 while True:
     while ser.inWaiting():
         message = ser.read(7)
-        print(message.decode('utf-8') + "\n")
+        
         if (message.decode('utf-8') == "request"):
             _, frame = cam.read()
             #frameCopy = cv2.imread("testImage.JPG",1)
@@ -97,21 +97,24 @@ while True:
                     xplusw = xOfInterest + wOfInterest
                     if (xOfInterest>xLimitLeft or xplusw>xLimitLeft) and (xOfInterest<xCenter or xplusw<xCenter):
                         print("turnRight\n")
-                        #ser.write('turnRight'.encode('utf-8'))
-                        #ser.flush() 
+                        ser.write('turnRight'.encode('utf-8'))
+                        ser.flush() 
                             
                     elif (xOfInterest<xLimitRight or xplusw<xLimitRight) and (xOfInterest>xCenter or xplusw>xCenter):
                         print("turnLeft\n")
-                        #ser.write('turnLeft'.encode('utf-8'))
-                        #ser.flush()  
+                        ser.write('turnLeft'.encode('utf-8'))
+                        ser.flush()                                                              
                 elif (closestYplusH <= yLimit) and (closestYplusH >= yLimit-int(0.5*yLimit)):
                         print("reverse\n")
-                        #ser.write('reverse'.encode('utf-8'))
-                        #ser.flush() 
+                        ser.write('reverse'.encode('utf-8'))
+                        ser.flush() 
             else:
                 print("noObject\n")
                 ser.write('noObject'.encode('utf-8'))
                 ser.flush() 
-        
+        else:
+            ser.write('invalid'.encode('utf-8'))
+            ser.flush()
+            print("invalid\n")
 
 
