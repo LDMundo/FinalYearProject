@@ -11,10 +11,10 @@ import cv2
 import numpy as np
 
 #Capture video through default camera
-#cap = cv2.VideoCapture(0)
-#_, img = cap.read()
+cap = cv2.VideoCapture(0)
+_, img = cap.read()
 
-img = cv2.imread("testImage.JPG", 1)
+#img = cv2.imread("testImage.JPG", 1)
 imgCopy = img.copy()
 
 #Determine the size of the image
@@ -46,11 +46,8 @@ kernelClose = np.ones((15,15), "uint8")
 maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpen)
 maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
 
-
 #Find Contours 
 _, contours, _ = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
-
-#cv2.drawContours(imgCopy, contours, -1, (0,0,255), thickness = 2)
 
 #Bound the contours if contours are large enough
 for i in range(len(contours)):
