@@ -31,7 +31,7 @@ def extractMask(img):
     #Convert img frame from BGR to HSV
     imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV)
 
-    #deflining the range of colours 
+    #deflining the range of colours [H, S, V]
     woodLower = np.array([9, 16, 163], np.uint8)
     woodUpper = np.array([29, 36, 243], np.uint8)
     greenLower = np.array([22, 80, 40], np.uint8)
@@ -53,10 +53,10 @@ def extractMask(img):
 
 while True:
     while ser.inWaiting():
-        message = ser.read(3)
-        if (mesaage..decode('utf-8') == "req"):
+        message = ser.read(5)
+        if (message.decode('utf-8') == "Hello"):
             #_, frame = cam.read()
-            frame = cv2.imread("testImage.jpg",1)
+            frame = cv2.imread("testImage.JPG",1)
             #Determine the size of the image
             imgHeight = np.size(frame, 0)
             imgWidth = np.size(frame, 1)
@@ -69,27 +69,33 @@ while True:
             yLimit = int(0.25*imgHeight)
 
             mask = extractMask(frame)
-            contours, hierarchy = cv2.findContours(mask.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
+            _, contours, _= cv2.findContours(mask.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
             for i in range(len(contours)):
                 area = cv2.contourArea(contours[i])
                 if(area > 250):
                     x,y,w,h = cv2.boundingRect(contours[i])
                     cv2.rectangle(mask.copy(), (x,y), (x+w, y+h), (255,0,0), 2)
+                    xplusw = x + w
                     print("rectangle " + str(i) + "   " + str(x) + "," + str(y))
 
-                    if(y+h >= yLimit):
-                        if(((x>xLimitLeft) || (x+w > xLimitLeft)) && ((x<xCenter) || (x+w < xCenter))):
-                            ser.write('turnRight'.encode('utf-8'))
-                            ser.flush() 
-                        else if(((x<xLimitRight) || (x+w < xLimitRight)) && ((x>xCenter) || (x+w > xCenter))):
-                            ser.write('turnLeft'.encode('utf-8'))
-                            ser.flush() 
-                    else if ((y+h <= yLimit) && (y+h <= yLimit-int(0.5*yLimit)) ):
-                        ser.write('reverse'.encode('utf-8'))
-                        ser.flush() 
+                    if y+h >= yLimit:
+                        if (x>xLimitLeft or xplusw>xLimitLeft) and (x<xCenter or xplusw<xCenter):
+                            print("turnRight\n")
+                            #ser.write('turnRight'.encode('utf-8'))
+                            #ser.flush() 
+                            
+                        elif (x<xLimitRight or xplusw<xLimitRight) and (x>xCenter or xplusw>xCenter):
+                            print("turnLeft\n")
+                            #ser.write('turnLeft'.encode('utf-8'))
+                            #ser.flush()  
+                    elif (y+h <= yLimit) and (y+h >= yLimit-int(0.5*yLimit)):
+                        print("reverse\n")
+                        #ser.write('reverse'.encode('utf-8'))
+                        #ser.flush() 
                 else:
-                    ser.write('noObject'.encode('utf-8'))
-                    ser.flush() 
+                    print("noObject\n")
+                    #ser.write('noObject'.encode('utf-8'))
+                    #ser.flush() 
 
 
 
