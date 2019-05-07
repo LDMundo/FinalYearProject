@@ -17,6 +17,7 @@ bool forwardState = 0;            // 1 if forward, 0 for stopped
 unsigned long previousMillis = 0; // store the last time forwardState is updated
 unsigned long currentMillis = 0;  // current running time of forwardState
 const long interval = 1500;       // interval to stop and forward the motor (wheels)
+String reply = "";                // holds the reply from raspbery pi
  
 /* Function prototypes declarations */
 void forward();     
@@ -53,9 +54,9 @@ void setup()
   pinMode(rightSwitch, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(leftSwitch), leftBump, HIGH);
   attachInterrupt(digitalPinToInterrupt(rightSwitch), rightBump, HIGH);
-
-  delay(1000); // 1 second delay before robot starts
+  
   Serial.begin(9600);
+  delay(1000); // 1 second delay before robot starts
 }
 
 
@@ -76,7 +77,29 @@ void loop()
       stopMotor();
     }
   }
-
+  
+  Serial.write("req");
+  Serial.setTimeout(200);
+ // while(!Serial.available());
+  reply = Serial.readString();
+  if(reply == "turnRight")
+  {
+    turnRight(500);
+  }
+  else if(reply == "turnLeft")
+  {
+    turnLeft(500);
+  }
+  else if(reply == "reverse")
+  {
+    rotorReverse();
+    reverse(500);
+    rotorOn();
+    turnRight(1000);
+  }
+  else if(reply == "noObject"){}
+  reply = ""; //flush reply
+  
   if(bumpedOnLeft == 1){
     rotorReverse();
     reverse(1000);
