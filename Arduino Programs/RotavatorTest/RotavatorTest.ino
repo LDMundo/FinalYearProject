@@ -1,7 +1,7 @@
 /**************************************
  * Robotic Rotavator Test Code        *
  * By: Lloyd Mundo                    *
- * Last Modified: 04 May 2019         *
+ * Last Modified: 16 May 2019         *
  **************************************/
 
 /* Global Variables are declared here */
@@ -16,6 +16,8 @@ volatile bool bumpedOnRight = 0;  // flag for when right bumper is hit
 bool forwardState = 0;            // 1 if forward, 0 for stopped
 unsigned long previousMillis = 0; // store the last time forwardState is updated
 unsigned long currentMillis = 0;  // current running time of forwardState
+unsigned long serialMillis = 0;   // store the time when a message is sent to the pi
+unsigned long afterSerialMillis = 0;  // current running time after sending a request to pi
 const long interval = 1500;       // interval to stop and forward the motor (wheels)
 String reply = "";                // holds the reply from raspbery pi
  
@@ -79,8 +81,14 @@ void loop()
   }
   
   Serial.write("req");
-  Serial.setTimeout(200);
- // while(!Serial.available());
+  serialMillis = millis();
+  while(!Serial.available())
+  {
+    afterSerialMillis = millis();
+    // if elapsed time after sending a message is greater than or equal 500ms
+    if((afterSerialMillis - serialMillis) >= 500) 
+      break;
+  }
   reply = Serial.readString();
   if(reply == "turnRight")
   {
