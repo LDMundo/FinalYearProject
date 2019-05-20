@@ -11,9 +11,9 @@ import cv2
 import numpy as np
 
 #Capture video through default camera
-#cap = cv2.VideoCapture(0)
-#_, img = cap.read()
-img = cv2.imread("saturated.jpg",1)
+cap = cv2.VideoCapture(0)
+_, img = cap.read()
+#img = cv2.imread("saturated.jpg",1)
 
 #img = cv2.imread("testImage.JPG", 1)
 imgCopy = img.copy()
@@ -28,13 +28,21 @@ xLimitRight = xCenter + int(0.40*imgWidth)
 yLimit = int(0.25*imgHeight)
 
 #Convert img frame from BGR to HSV
-imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV)
+imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV) 
+'''
+(h, s, v) = cv2.split(imgHSV)
+h= h+15
+h = np.clip(h, 0, 255)
+s = s*2
+s = np.clip(s, 0, 255)
+imgHSV = cv2.merge([h, s, v])
+'''
 
 #deflining the range of green color
-woodLower = np.array([9, 16, 163], np.uint8)
-woodUpper = np.array([29, 36, 243], np.uint8)
-greenLower = np.array([158, 79, 143], np.uint8)
-greenUpper = np.array([179, 255, 255], np.uint8)
+woodLower = np.array([9, 16, 163], np.uint8)        #lower range of wood colour
+woodUpper = np.array([29, 36, 243], np.uint8)       #upper range of wood colour
+greenLower = np.array([165,  44,  45], np.uint8)       #lower range of green colour
+greenUpper = np.array([175, 61, 120], np.uint8)     #upper range of wood colour
 
 #Filter out other colours, only show green colour
 greenMask = cv2.inRange(imgHSV, greenLower, greenUpper)
