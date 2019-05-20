@@ -23,7 +23,8 @@ def main():
     import sys
     global image_hsv, pixel # so we can use it in mouse callback
     
-    _, frame = cam.read();
+    #_, frame = cam.read();
+    frame = cv2.imread("saturated.jpg",1)
     image_src = frame.copy()  # pick.py my.png
     if image_src is None:
         print ("the image read is None............")

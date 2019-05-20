@@ -33,8 +33,8 @@ imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV)
 #deflining the range of green color
 woodLower = np.array([9, 16, 163], np.uint8)
 woodUpper = np.array([29, 36, 243], np.uint8)
-greenLower = np.array([45, 60, 50], np.uint8)
-greenUpper = np.array([75, 255, 255], np.uint8)
+greenLower = np.array([158, 79, 143], np.uint8)
+greenUpper = np.array([179, 255, 255], np.uint8)
 
 #Filter out other colours, only show green colour
 greenMask = cv2.inRange(imgHSV, greenLower, greenUpper)
@@ -48,7 +48,7 @@ maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpe
 maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
 
 #Find Contours 
-contours, _ = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
+_, contours, _ = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
 
 #Bound the contours if contours are large enough
 for i in range(len(contours)):
