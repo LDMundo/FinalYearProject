@@ -62,9 +62,9 @@ def extractMask(img):
 
 while True:
     while ser.inWaiting(): #execute when data is available from arduino
-        message = ser.read(7)   #reads 7 bytes of data
+        message = ser.read(3)   #reads 3 bytes of data
         
-        if (message.decode('utf-8') == "request"):  # check if the message decoded is "request"
+        if (message.decode('utf-8') == "req"):  # check if the message decoded is "request"
             _, frame = cam.read()                   #read a frame/image off the camera
             #frameCopy = cv2.imread("testImage.JPG",1)
             frameCopy = frame.copy()                #make a copy of the image
