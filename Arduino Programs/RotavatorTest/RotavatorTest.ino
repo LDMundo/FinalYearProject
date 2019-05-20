@@ -85,8 +85,8 @@ void loop()
   while(!Serial.available())
   {
     afterSerialMillis = millis();
-    // if elapsed time after sending a message is greater than or equal 500ms
-    if((afterSerialMillis - serialMillis) >= 500) 
+    // if elapsed time after sending a message is greater than or equal 1s
+    if((afterSerialMillis - serialMillis) >= 1000) 
       break;
   }
   reply = Serial.readString();

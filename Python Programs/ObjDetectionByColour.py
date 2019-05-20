@@ -29,7 +29,13 @@ cam = cv2.VideoCapture(0)
 def extractMask(img):
     imgCopy = img.copy()
     #Convert img frame from BGR to HSV
-    imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV)
+    imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV) 
+    (h, s, v) = cv2.split(imgHSV)   #extract the HSV values individually
+    h = h+15                        #increase H channel
+    h = np.clip(h, 0, 255)          #ensure it is within 0 and 255
+    s = s*2                         #increase Saturation channel
+    s = np.clip(s, 0, 255)          #ensure it is within 0 and 255
+    imgHSV = cv2.merge([h, s, v])   #merge the changes
 
     #deflining the range of colours [H, S, V]
     woodLower = np.array([9, 16, 163], np.uint8)        #lower range of wood colour
@@ -37,7 +43,6 @@ def extractMask(img):
     greenLower = np.array([22, 15, 30], np.uint8)       #lower range of green colour
     greenUpper = np.array([99, 255, 255], np.uint8)     #upper range of wood colour
 
-    
     #All colours within range are turned to white (255), otherwise, black (0)
     #green colour mask
     greenMask = cv2.inRange(imgHSV, greenLower, greenUpper)  
