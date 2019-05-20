@@ -18,7 +18,7 @@ import cv2
 import numpy as np
 
 cam = cv2.VideoCapture(0)
-
+'''
 while True:
     _, frame = cam.read();
     #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -29,4 +29,8 @@ while True:
 
 cam.release()
 cv2.destroyAllWindows()
+'''
 
+_, frame = cam.read()
+cv2.imshow("Frame", frame)
+cv2.imwrite("frame.jpg", frame)
