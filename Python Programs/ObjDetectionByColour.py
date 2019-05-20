@@ -4,7 +4,7 @@
      The code  is currently detecting green, and plywood colour
      
      By: Lloyd Mundo
-     Last Modified: 06/05/2019
+     Last Modified: 20/05/2019
 '''
 #import modules
 import cv2
@@ -32,59 +32,62 @@ def extractMask(img):
     imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV)
 
     #deflining the range of colours [H, S, V]
-    woodLower = np.array([9, 16, 163], np.uint8)
-    woodUpper = np.array([29, 36, 243], np.uint8)
-    greenLower = np.array([22, 15, 30], np.uint8)
-    greenUpper = np.array([99, 255, 255], np.uint8)
+    woodLower = np.array([9, 16, 163], np.uint8)        #lower range of wood colour
+    woodUpper = np.array([29, 36, 243], np.uint8)       #upper range of wood colour
+    greenLower = np.array([22, 15, 30], np.uint8)       #lower range of green colour
+    greenUpper = np.array([99, 255, 255], np.uint8)     #upper range of wood colour
 
-    #Filter out other colours, only show green colour
-    greenMask = cv2.inRange(imgHSV, greenLower, greenUpper)
+    
+    #All colours within range are turned to white (255), otherwise, black (0)
+    #green colour mask
+    greenMask = cv2.inRange(imgHSV, greenLower, greenUpper)  
     #Wood mask
     woodMask = cv2.inRange(imgHSV, woodLower, woodUpper)
 
     #Morphological Transformation
-    kernelOpen = np.ones((5,5), "uint8")
-    kernelClose = np.ones((15,15), "uint8")
-    maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpen)
-    maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
+    kernelOpen = np.ones((5,5), "uint8")    #structuring element for morphology opening
+    kernelClose = np.ones((15,15), "uint8") #structuring element for morphology closing
+    maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpen)  #morphology opening
+    maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)      #morphology closing
 
-    return(maskCloseMorph)
+    return(maskCloseMorph)  # retun the noiseless mask
 
 
 while True:
-    while ser.inWaiting():
-        message = ser.read(7)
+    while ser.inWaiting(): #execute when data is available from arduino
+        message = ser.read(7)   #reads 7 bytes of data
         
-        if (message.decode('utf-8') == "request"):
-            _, frame = cam.read()
+        if (message.decode('utf-8') == "request"):  # check if the message decoded is "request"
+            _, frame = cam.read()                   #read a frame/image off the camera
             #frameCopy = cv2.imread("testImage.JPG",1)
-            frameCopy = frame.copy()
+            frameCopy = frame.copy()                #make a copy of the image
                         
             #Determine the size of the image
-            imgHeight = np.size(frameCopy, 0)
-            imgWidth = np.size(frameCopy, 1)
+            imgHeight = np.size(frameCopy, 0)       #takes the height of the frame
+            imgWidth = np.size(frameCopy, 1)        #takes the width of the frame
 
             #Limits 
-            xCenter = int(imgWidth/2)
-            yCenter = int(imgHeight/2)
-            xLimitLeft = xCenter - int(0.40*imgWidth)
-            xLimitRight = xCenter + int(0.40*imgWidth)
-            yLimit = int(0.25*imgHeight)
+            xCenter = int(imgWidth/2)                   #x coordinate of the centre of the frame
+            yCenter = int(imgHeight/2)                  #y coordinate of the centre of the frame
+            xLimitLeft = xCenter - int(0.40*imgWidth)   #left boundary of the frame
+            xLimitRight = xCenter + int(0.40*imgWidth)  #right boundary of the frame
+            yLimit = int(0.25*imgHeight)                #top boundaary of the frame
 
-            mask = extractMask(frame.copy())
+            mask = extractMask(frame.copy())            #obtain the mask containing only the region of interest
             _, contours, _= cv2.findContours(mask, mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE) #extract contours
-            closestYplusH = 0
-            xOfInterest = 0
-            yOfInterest = 0
-            wOfInterest = 0
-            hOfInterest = 0            
-            for i in range(len(contours)):
-                area = cv2.contourArea(contours[i])
-                if(area > 250):
-                    x,y,w,h = cv2.boundingRect(contours[i])
+            closestYplusH = 0   # cloest rectangle's bottom y coordinate    
+            xOfInterest = 0     # x coordinate of the closest bounnding rectangle
+            yOfInterest = 0     # y coordinate of the closest bounnding rectangle
+            wOfInterest = 0     # width of the closest bounnding rectangle
+            hOfInterest = 0     # heigh of the closest bounnding rectangle      
+            for i in range(len(contours)):              #iterates through all the contours found
+                area = cv2.contourArea(contours[i])     #takes the area of the indexed contour
+                if(area > 250):                         #if the area of the contour is greater than 250 px^2
+                    x,y,w,h = cv2.boundingRect(contours[i]) #enclosed the contour with a bounding rectangle
                     cv2.rectangle(frameCopy, (x,y), (x+w, y+h), (255,0,0), 2)
                     #print("rectangle " + str(i) + "   " + str(x) + "," + str(y))
                     
+                    #check if the bottom y coordinate is greater than the current closet rectangle
                     if y+h > closestYplusH:
                         closestYplusH = y+h
                         xOfInterest = x
