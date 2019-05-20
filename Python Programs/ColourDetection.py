@@ -11,8 +11,9 @@ import cv2
 import numpy as np
 
 #Capture video through default camera
-cap = cv2.VideoCapture(0)
-_, img = cap.read()
+#cap = cv2.VideoCapture(0)
+#_, img = cap.read()
+img = cv2.imread("saturated.jpg",1)
 
 #img = cv2.imread("testImage.JPG", 1)
 imgCopy = img.copy()
@@ -32,8 +33,8 @@ imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV)
 #deflining the range of green color
 woodLower = np.array([9, 16, 163], np.uint8)
 woodUpper = np.array([29, 36, 243], np.uint8)
-greenLower = np.array([22, 15, 30], np.uint8)
-greenUpper = np.array([99, 255, 255], np.uint8)
+greenLower = np.array([45, 60, 50], np.uint8)
+greenUpper = np.array([75, 255, 255], np.uint8)
 
 #Filter out other colours, only show green colour
 greenMask = cv2.inRange(imgHSV, greenLower, greenUpper)
@@ -47,7 +48,7 @@ maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpe
 maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
 
 #Find Contours 
-_, contours, _ = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
+contours, _ = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
 
 #Bound the contours if contours are large enough
 for i in range(len(contours)):
