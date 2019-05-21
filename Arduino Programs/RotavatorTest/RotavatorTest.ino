@@ -52,8 +52,8 @@ void setup()
   pinMode( 5, OUTPUT ); //HIGH for forward
 
   /* Interrupts */
-  pinMode(leftSwitch, INPUT_PULLUP);
-  pinMode(rightSwitch, INPUT_PULLUP);
+  pinMode(leftSwitch, INPUT);
+  pinMode(rightSwitch, INPUT);
   attachInterrupt(digitalPinToInterrupt(leftSwitch), leftBump, HIGH);
   attachInterrupt(digitalPinToInterrupt(rightSwitch), rightBump, HIGH);
   
@@ -79,35 +79,35 @@ void loop()
       stopMotor();
     }
   }
-  
+  /*
   Serial.write("req");
   serialMillis = millis();
   while(!Serial.available())
   {
     afterSerialMillis = millis();
     // if elapsed time after sending a message is greater than or equal 1s
-    if((afterSerialMillis - serialMillis) >= 1000) 
+    if((afterSerialMillis - serialMillis) >= 400) 
       break;
   }
   reply = Serial.readString();
   if(reply == "turnRight")
   {
-    turnRight(500);
+    turnRight(800);
   }
   else if(reply == "turnLeft")
   {
-    turnLeft(500);
+    turnLeft(800);
   }
   else if(reply == "reverse")
   {
     rotorReverse();
-    reverse(500);
+    reverse(1500);
     rotorOn();
     turnRight(1000);
   }
   else if(reply == "noObject"){}
   reply = ""; //flush reply
-  
+  */
   if(bumpedOnLeft == 1){
     rotorReverse();
     reverse(1000);
@@ -117,14 +117,14 @@ void loop()
   }
   else if(bumpedOnRight == 1){
     rotorReverse();
-    reverse(1000);
+    reverse(1500);
     rotorOn();
     turnLeft(1000);
     bumpedOnRight = 0;
   }
   else if(objDistance() < 10){
     rotorReverse();
-    reverse(1000);
+    reverse(1500);
     rotorOn();
     turnLeft(1000);
   }
@@ -156,7 +156,6 @@ void forward()
   digitalWrite(10, HIGH);
   digitalWrite(11, LOW);
   digitalWrite(9, LOW);
-
 }
 
 /******************************************
