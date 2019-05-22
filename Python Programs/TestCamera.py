@@ -8,8 +8,7 @@ camera = PiCamera()
 camera.start_preview()
 camera.image_effect = 'denoise'
 camera.image_effect = 'colorbalance'
-camera.image_effect = 'colorpoint'
-camera.image_effect = 'saturation'
+camera.image_effect = 'colorpoint'su
 sleep(30)
 camera.stop_preview()
 '''
@@ -32,7 +31,7 @@ while True:
     imgHSV = cv2.merge([h, s, v])
     
     imgBGR = cv2.cvtColor(imgHSV, cv2.COLOR_HSV2BGR)
-    #cv2.imwrite("saturated.jpg", imgBGR)
+    cv2.imwrite("enhancedFrame.jpg", imgBGR)
     cv2.imshow("img saturated", imgBGR)
     key = cv2.waitKey(1)
     if key == 2:
@@ -42,6 +41,15 @@ while True:
 
 '''
 _, frame = cam.read()
-cv2.imshow("Frame", frame)
-cv2.imwrite("frame.jpg", frame)
+imgHSV = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2HSV) 
+(h, s, v) = cv2.split(imgHSV)
+h = h+20
+h = np.clip(h, 0, 255)
+s = s+30
+s = np.clip(s, 0, 255)
+imgHSV = cv2.merge([h, s, v])
+    
+imgBGR = cv2.cvtColor(imgHSV, cv2.COLOR_HSV2BGR)
+#cv2.imshow("Frame", frame)
+cv2.imwrite("frame5.jpg", imgBGR)
 '''

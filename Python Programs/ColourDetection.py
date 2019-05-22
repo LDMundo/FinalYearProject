@@ -12,6 +12,12 @@ import numpy as np
 
 #Capture video through default camera
 
+
+#cap = cv2.VideoCapture(0)
+#_, img = cap.read()
+#img = cv2.imread("saturated.jpg",1)
+
+
 #img = cv2.imread("saturated.jpg",1)
 
 #img = cv2.imread("testImage.JPG", 1)
@@ -25,6 +31,7 @@ yCenter = int(imgHeight/2)
 xLimitLeft = xCenter - int(0.40*imgWidth)
 xLimitRight = xCenter + int(0.40*imgWidth)
 yLimit = int(0.25*imgHeight)
+
 
 #Convert img frame from BGR to HSV
 imgHSV = cv2.cvtColor(imgCopy, cv2.COLOR_BGR2HSV) 
@@ -53,7 +60,6 @@ kernelOpen = np.ones((5,5), "uint8")
 kernelClose = np.ones((15,15), "uint8")
 maskOpenMorph = cv2.morphologyEx(greenMask, cv2.MORPH_OPEN, kernelOpen)
 maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
-
 #Find Contours 
 contours, _ = cv2.findContours(maskCloseMorph.copy(), mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_NONE)
 
@@ -76,10 +82,10 @@ cv2.line(img, (0,yLimit), (imgWidth,yLimit), (255,255,255), 2) # top limit
 cv2.line(img, (xLimitLeft, 0), (xLimitLeft, imgHeight), (255,255,255), 2) # left limit
 cv2.line(img, (xLimitRight,0), (xLimitRight, imgHeight), (255,255,255), 2) # right limit
 
+
 cv2.imshow("Image in test", img)
 cv2.imshow("mask", greenMask)
 cv2.imshow("Morphology Opening", maskOpenMorph)
 cv2.imshow("Morphology Closing", maskCloseMorph)
 cv2.waitKey(10)
-
 #print("H = "+str(imgHeight) + "\nWidth = " + str(imgWidth))
