@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 
 #Capture video through default camera
-while true:
+while True:
      cap = cv2.VideoCapture(0)
      _, img = cap.read()
      #img = cv2.imread("saturated.jpg",1)
@@ -40,20 +40,20 @@ while true:
      '''
 
      #deflining the range of green color
-     woodLower = np.array([9, 16, 163], np.uint8)        #lower range of wood colour
-     woodUpper = np.array([29, 36, 243], np.uint8)       #upper range of wood colour
+     #woodLower = np.array([9, 16, 163], np.uint8)        #lower range of wood colour
+     #woodUpper = np.array([29, 36, 243], np.uint8)       #upper range of wood colour
      greenLower = np.array([165,  44,  45], np.uint8)       #lower range of green colour
      greenUpper = np.array([175, 61, 120], np.uint8)     #upper range of wood colour
 
      #Filter out other colours, only show green colour
      greenMask = cv2.inRange(imgHSV, greenLower, greenUpper)
      #Wood mask
-     woodMask = cv2.inRange(imgHSV, woodLower, woodUpper)
+     #woodMask = cv2.inRange(imgHSV, woodLower, woodUpper)
 
      #Morphological Transformation
      kernelOpen = np.ones((5,5), "uint8")
      kernelClose = np.ones((15,15), "uint8")
-     maskOpenMorph = cv2.morphologyEx(greenMask | woodMask, cv2.MORPH_OPEN, kernelOpen)
+     maskOpenMorph = cv2.morphologyEx(greenMask, cv2.MORPH_OPEN, kernelOpen)
      maskCloseMorph = cv2.morphologyEx(maskOpenMorph, cv2.MORPH_CLOSE, kernelClose)
 
      #Find Contours 
@@ -79,7 +79,7 @@ while true:
      cv2.line(img, (xLimitRight,0), (xLimitRight, imgHeight), (255,255,255), 2) # right limit
 
      cv2.imshow("Image in test", img)
-     cv2.imshow("mask", greenMask | woodMask)
+     cv2.imshow("mask", greenMask)
      cv2.imshow("Morphology Opening", maskOpenMorph)
      cv2.imshow("Morphology Closing", maskCloseMorph)
      cv2.waitKey(10)
