@@ -17,12 +17,12 @@ import cv2
 import numpy as np
 
 cam = cv2.VideoCapture(0)
-'''
+
 while True:
     _, frame = cam.read();
     #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    cv2.imshow("Frame", frame)
-    #imgHSV = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2HSV) 
+    #cv2.imshow("Frame", frame)
+    imgHSV = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2HSV) 
     (h, s, v) = cv2.split(imgHSV)
     h = h+15
     h = np.clip(h, 0, 255)
@@ -31,7 +31,7 @@ while True:
     imgHSV = cv2.merge([h, s, v])
     
     imgBGR = cv2.cvtColor(imgHSV, cv2.COLOR_HSV2BGR)
-    #cv2.imwrite("saturated.jpg", imgBGR)
+    cv2.imwrite("enhancedFrame.jpg", imgBGR)
     cv2.imshow("img saturated", imgBGR)
     key = cv2.waitKey(1)
     if key == 2:
@@ -52,4 +52,4 @@ imgHSV = cv2.merge([h, s, v])
 imgBGR = cv2.cvtColor(imgHSV, cv2.COLOR_HSV2BGR)
 #cv2.imshow("Frame", frame)
 cv2.imwrite("frame5.jpg", imgBGR)
-
+'''
