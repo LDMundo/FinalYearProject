@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-image_hsv = None   # global ;(
-pixel = (20,60,80) # some stupid default
+image_hsv = None   # global 
+pixel = (20,60,80) # some default
 
 cam = cv2.VideoCapture(0)
 
